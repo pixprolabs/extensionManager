@@ -1,0 +1,38 @@
+#!/sbin/runscript
+# Copyright 1999-2013 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Header: $
+
+export PIXEXT_PATH=/home/johan/pixext/
+export PIXEXT_HOSTNAME=sture.pixpro.net:8080
+export PIXEXT_MYSQL_DB=extensionmanager
+export PIXEXT_MYSQL_HOST=localhost
+export PIXEXT_MYSQL_PORT=3306
+export PIXEXT_MYSQL_USER=
+export PIXEXT_MYSQL_PASS=
+export PIXEXT_SECRET=
+export PIXEXT_JOOMLA_PREFIX=jos_
+
+
+depend() {
+    need net
+    need localmount 
+}
+
+start() {
+    ebegin "Starting Pixext"
+    start-stop-daemon --background --start --exec \
+    env GOPATH=/home/johan/go \
+    /home/johan/go/bin/extensionManager \
+    -u johan \
+    --make-pidfile --pidfile /var/run/pixext.pid \
+    -- 
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping Pixext"
+    start-stop-daemon --stop --exec  /home/johan/go/bin/extensionManager \
+    --pidfile /var/run/pixext.pid
+    eend $?
+}
